@@ -4,12 +4,10 @@ import {
   TextInput,
   Text,
   StyleSheet,
-  ViewStyle,
   TextStyle,
   TextInputProps,
 } from 'react-native';
 import { FieldError } from 'react-hook-form';
-import { onChange } from 'react-native-reanimated';
 
 interface Props extends TextInputProps {
   name: string;
@@ -17,7 +15,7 @@ interface Props extends TextInputProps {
   labelStyle?: TextStyle;
   inputStyle?: TextStyle;
   error?: FieldError | undefined;
-  textTransform?: any;
+  textTransform?: "capitalize" | "uppercase" | "lowercase" | "none";
 }
 
 export default React.forwardRef<any, Props>(
@@ -52,6 +50,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     height: 40,
     color: 'grey',
+    textTransform: "uppercase"
   },
   label: {
     paddingVertical: 5,

@@ -9,7 +9,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function Profile() {
   const { register, handleSubmit, setValue, formState: {errors} } = useForm();
-  const onSubmit: any = (data:any) => console.log(data);
+  const onSubmit: any = (data: any) => console.log(data);
   const [iban, setiban] = useState(['','','',''])
 
   return (
@@ -23,32 +23,76 @@ export default function Profile() {
 
         <Text style={styles.label}>IBAN</Text>
         <View style={styles.ibanContainer}>
-          <Input {...register('iban1', {required: true})} inputStyle={styles.inputIbanField} onChangeText={(value: string) => {
-            const auxIban: string[] = iban;
-            auxIban[0] = value;
-            setiban(auxIban);
-          }}></Input>
+          <Input 
+            {...register('iban1', {
+              required: true,
+              pattern: /^[A-Z]{2}[0-9]{2}$/i,
+              maxLength: 4
+            })}
+            inputStyle={styles.inputIbanField} 
+            onChangeText={(value: string) => {
+              const auxIban: string[] = iban;
+              auxIban[0] = value.toUpperCase();
+              setiban(auxIban);
+            }}
+            textTransform="uppercase"
+            maxLength={4}
+          >
+          </Input>
           <Text style={styles.ibanSeparator}>-</Text>
 
-          <Input {...register('iban2', {required: true})} inputStyle={styles.inputIbanField} onChangeText={(value) => {
-           const auxIban: string[] = iban;
-           auxIban[1] = value;
-           setiban(auxIban);
-          }}></Input>
+          <Input 
+            {...register('iban2', {
+              required: true,
+              pattern: /^[0-9]{4}$/i,
+              maxLength: 4
+            })}
+            inputStyle={styles.inputIbanField} 
+            onChangeText={(value: string) => {
+              const auxIban: string[] = iban;
+              auxIban[1] = value;
+              setiban(auxIban);
+            }}
+            keyboardType='numeric'
+            maxLength={4}
+          >
+          </Input>
           <Text style={styles.ibanSeparator}>-</Text>
 
-          <Input {...register('iban3', {required: true})} inputStyle={styles.inputIbanField} onChangeText={(value) => {
-            const auxIban: string[] = iban;
-            auxIban[2] = value;
-            setiban(auxIban);
-          }}></Input>
+          <Input 
+            {...register('iban3', {
+              required: true,
+              pattern: /^[0-9]{4}$/i,
+              maxLength: 4
+            })}
+            inputStyle={styles.inputIbanField} 
+            onChangeText={(value: string) => {
+              const auxIban: string[] = iban;
+              auxIban[2] = value;
+              setiban(auxIban);
+            }}
+            keyboardType='numeric'
+            maxLength={4}
+          >
+          </Input>
           <Text style={styles.ibanSeparator}>-</Text>
 
-          <Input {...register('iban4', {required: true})} inputStyle={styles.inputIbanField} onChangeText={(value) => {
-            const auxIban: string[] = iban;
-            auxIban[4] = value;
-            setiban(auxIban);
-          }}></Input>
+          <Input 
+            {...register('iban4', {
+              required: true,
+              pattern: /^[0-9]{4}$/i,
+              maxLength: 4
+            })}
+            inputStyle={styles.inputIbanField} 
+            onChangeText={(value: string) => {
+              const auxIban: string[] = iban;
+              auxIban[3] = value;
+              setiban(auxIban);
+            }}
+            keyboardType='numeric'
+            maxLength={4}
+          >
+          </Input>
         </View>
 
         <Input label='BIC' {...register('bic')} inputStyle={styles.inputBig} onChange={(value) => {
