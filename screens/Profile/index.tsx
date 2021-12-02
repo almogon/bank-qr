@@ -5,19 +5,34 @@ import { useForm } from "react-hook-form";
 import { StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import usePersonalData, { PersonalData } from '../../stores/personalData';
 
 
-export default function Profile() {
-  const { register, handleSubmit, setValue, formState: {errors} } = useForm();
-  const onSubmit: any = (data: any) => console.log(data);
-  const [iban, setiban] = useState(['','','',''])
+const Profile = () => {
+  const { register, handleSubmit, setValue, formState: {errors} } = useForm({mode: 'onChange'});
+  // const {updateName, updateIban, updateBic, name, iban, bic} = usePersonalData((state: PersonalData) => ({
+  //   updateName: state.updateName,
+  //   updateIban: state.updateIban,
+  //   updateBic: state.updateBic,
+  //   name: state.name,
+  //   iban: state.iban,
+  //   bic: state.bic
+  // }));
+  // const onSubmit: any = (data: any) => {
+  //   console.log('LOOOOl', data);
+  //   console.log('GUARDAR y NAVEGAR');
+  //   updateName(data.name);
+  //   updateIban(`${data.iban1}${data.iban2}${data.iban3}${data.iban4}`);
+  //   updateBic(data.bic);
+  // };
+  const [ibanForm, setiban] = useState(['','','','']);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
       <Text style={styles.title}>Personal Data</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <View style={styles.form}>
-        <Input label='NAME' {...register('name', {required: true})} inputStyle={styles.inputBig} error={errors.name} onChange={(value) => {
+        <Input label='NAME' {...register('name', {required: true})} inputStyle={styles.inputBig} error={errors.name} onChangeText={(value: string) => {
           setValue('name', value);
         }} ></Input>
 
@@ -31,12 +46,14 @@ export default function Profile() {
             })}
             inputStyle={styles.inputIbanField} 
             onChangeText={(value: string) => {
-              const auxIban: string[] = iban;
+              const auxIban: string[] = ibanForm;
               auxIban[0] = value.toUpperCase();
               setiban(auxIban);
+              setValue('iban1', value);
             }}
             textTransform="uppercase"
             maxLength={4}
+            error={errors.iban1}
           >
           </Input>
           <Text style={styles.ibanSeparator}>-</Text>
@@ -49,12 +66,14 @@ export default function Profile() {
             })}
             inputStyle={styles.inputIbanField} 
             onChangeText={(value: string) => {
-              const auxIban: string[] = iban;
+              const auxIban: string[] = ibanForm;
               auxIban[1] = value;
               setiban(auxIban);
+              setValue('iban2', value);
             }}
             keyboardType='numeric'
             maxLength={4}
+            error={errors.iban2}
           >
           </Input>
           <Text style={styles.ibanSeparator}>-</Text>
@@ -67,12 +86,14 @@ export default function Profile() {
             })}
             inputStyle={styles.inputIbanField} 
             onChangeText={(value: string) => {
-              const auxIban: string[] = iban;
+              const auxIban: string[] = ibanForm;
               auxIban[2] = value;
               setiban(auxIban);
+              setValue('iban3', value);
             }}
             keyboardType='numeric'
             maxLength={4}
+            error={errors.iban3}
           >
           </Input>
           <Text style={styles.ibanSeparator}>-</Text>
@@ -85,27 +106,31 @@ export default function Profile() {
             })}
             inputStyle={styles.inputIbanField} 
             onChangeText={(value: string) => {
-              const auxIban: string[] = iban;
+              const auxIban: string[] = ibanForm;
               auxIban[3] = value;
               setiban(auxIban);
+              setValue('iban4', value);
             }}
             keyboardType='numeric'
             maxLength={4}
+            error={errors.iban4}
           >
           </Input>
         </View>
 
-        <Input label='BIC' {...register('bic')} inputStyle={styles.inputBig} onChange={(value) => {
+        <Input label='BIC' {...register('bic')} inputStyle={styles.inputBig} onChangeText={(value: string) => {
           setValue('bic', value);
         }}></Input>
 
-        <TouchableOpacity onPress={onSubmit} style={styles.button}>
+        <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.button}>
           <Text style={styles.buttonText}>SAVE</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
+
+export default Profile;
 
 const styles = StyleSheet.create({
   container: {

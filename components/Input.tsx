@@ -19,7 +19,7 @@ interface Props extends TextInputProps {
 }
 
 export default React.forwardRef<any, Props>(
-  (props, ref): React.ReactElement => {
+  (props: any, ref: any): React.ReactElement => {
     const { label, labelStyle, error, autoCapitalize='none', textTransform='none', inputStyle, ...inputProps } = props;
 
     return (
