@@ -1,30 +1,31 @@
 import * as React from 'react';
-import Input from '../../components/Input';
-import { Text, View, ScrollView } from '../../components/Themed';
 import { useForm } from "react-hook-form";
 import { StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import usePersonalData, { PersonalData } from '../../stores/personalData';
+import { ScrollView, View, Text } from '@app/components/Themed';
+import Input from '@app/components/Input';
+import usePersonalData, { PersonalData } from '@app/stores/personalData';
 
 
-const Profile = () => {
+const Profile = ({navigation}: any) => {
   const { register, handleSubmit, setValue, formState: {errors} } = useForm({mode: 'onChange'});
-  // const {updateName, updateIban, updateBic, name, iban, bic} = usePersonalData((state: PersonalData) => ({
-  //   updateName: state.updateName,
-  //   updateIban: state.updateIban,
-  //   updateBic: state.updateBic,
-  //   name: state.name,
-  //   iban: state.iban,
-  //   bic: state.bic
-  // }));
-  // const onSubmit: any = (data: any) => {
-  //   console.log('LOOOOl', data);
-  //   console.log('GUARDAR y NAVEGAR');
-  //   updateName(data.name);
-  //   updateIban(`${data.iban1}${data.iban2}${data.iban3}${data.iban4}`);
-  //   updateBic(data.bic);
-  // };
+  const {updateName, updateIban, updateBic, name, iban, bic} = usePersonalData((state: PersonalData) => ({
+    updateName: state.updateName,
+    updateIban: state.updateIban,
+    updateBic: state.updateBic,
+    name: state.name,
+    iban: state.iban,
+    bic: state.bic
+  }));
+  const onSubmit: any = (data: any) => {
+    console.log('to save', data);
+    console.log('GUARDAR y NAVEGAR');
+    updateName(data.name);
+    updateIban(`${data.iban1}${data.iban2}${data.iban3}${data.iban4}`);
+    updateBic(data.bic);
+    navigation.goBack();
+  };
   const [ibanForm, setiban] = useState(['','','','']);
 
   return (
