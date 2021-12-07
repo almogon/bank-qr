@@ -116,9 +116,10 @@ const Profile = ({ navigation }: any) => {
 
         <Input
           label='BIC'
-          {...register(BIC)}
+          {...register(BIC, { required: { value: true, message: 'Mandatory'} })}
           defaultValue={bic}
           inputStyle={styles.inputBig}
+          error={errors.bic}
           onChangeText={(value: string) => {
             setValue(BIC, value);
           }}>
