@@ -14,27 +14,23 @@ type PersonalData = {
 }
 
 const NAME = 'name';
-const IBAN1 = 'iban1';
-const IBAN2 = 'iban2';
-const IBAN3 = 'iban3';
-const IBAN4 = 'iban4';
+const IBAN = 'iban';
 const BIC = 'bic';
+const IBAN_PATTERN = /^\b([a-zA-Z]{2}[0-9]{2})(?:[ ]?[0-9]{4}){4,5}(?!(?:[ ]?[0-9]){3})(?:[ ]?[0-9]{1,2})?\b$/gm
 
 const Profile = ({ navigation }: any) => {
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onChange' });
+  const { register, handleSubmit, setValue, formState: { errors }, clearErrors } = useForm({ mode: 'onChange' });
 
   const onSubmit: any = (data: any) => {
-    console.log('to save', data);
-
     setItem('personalData', {
       name: data.name.toUpperCase(),
-      iban: `${data.iban1}${data.iban2}${data.iban3}${data.iban4}`.toUpperCase(),
+      iban: data.iban.toUpperCase(),
       bic: data.bic.toUpperCase()
     });
     console.log('GUARDAR y NAVEGAR');
-    // navigation.goBack();
+    navigation.goBack();
   };
-  const [ibanForm, setiban] = useState(['', '', '', '']);
+  const [iban, setiban] = useState('');
   const [name, setName] = useState('');
   const [bic, setBic] = useState('');
 
@@ -47,17 +43,9 @@ const Profile = ({ navigation }: any) => {
           setValue(NAME, personalData.name);
         }
         if (personalData.iban) {
-          // split iban
-          const iban1 = personalData.iban.slice(0, 4);
-          const iban2 = personalData.iban.slice(4, 8);
-          const iban3 = personalData.iban.slice(8, 12);
-          const iban4 = personalData.iban.slice(12, 16);
-          console.log(iban1, iban2, iban3, iban4);
-          setiban([iban1, iban2, iban3, iban4]);
-          setValue(IBAN1, iban1);
-          setValue(IBAN2, iban2);
-          setValue(IBAN3, iban3);
-          setValue(IBAN4, iban4);
+          // TODO Format add spaces
+          setiban(formatIbanWithSpaces(personalData.iban));
+          setValue(IBAN, personalData.iban);
         }
         if (personalData.bic) {
           setBic(personalData.bic);
@@ -69,6 +57,23 @@ const Profile = ({ navigation }: any) => {
     fnct();
   }, [])
 
+  const formatIbanWithSpaces = (iban: string): string => {
+    if (!iban.length) {
+      console.error('Empty iban');
+      return;
+    }
+    iban = iban.replace( /\s/g , '');
+    let ibanAux = '';
+    iban.split('').map((char: string, idx: number) => {
+      if (idx != 0 && idx % 4 === 0) {
+        ibanAux += ' '
+      }
+      ibanAux += char;
+    });
+
+    return ibanAux;
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
       <Text style={styles.title}>Personal Data</Text>
@@ -76,7 +81,7 @@ const Profile = ({ navigation }: any) => {
       <View style={styles.form}>
         <Input
           label='NAME'
-          {...register(NAME, { required: true })}
+          {...register(NAME, { required: { value: true, message: 'Mandatory'} })}
           defaultValue={name}
           inputStyle={styles.inputBig}
           error={errors.name}
@@ -85,91 +90,29 @@ const Profile = ({ navigation }: any) => {
           }}>  
         </Input>
 
-        <Text style={styles.label}>IBAN</Text>
-        <View style={styles.ibanContainer}>
-          <Input
-            {...register(IBAN1, {
-              required: true,
-              pattern: /^[A-Z]{2}[0-9]{2}$/i,
-              maxLength: 4
-            })}
-            inputStyle={styles.inputIbanField}
-            onChangeText={(value: string) => {
-              const auxIban: string[] = ibanForm;
-              auxIban[0] = value.toUpperCase();
-              setiban(auxIban);
-              setValue(IBAN1, value.toUpperCase());
-            }}
-            textTransform="uppercase"
-            maxLength={4}
-            error={errors.iban1}
-            defaultValue={ibanForm[0]}
-          >
-          </Input>
-          <Text style={styles.ibanSeparator}>-</Text>
-
-          <Input
-            {...register(IBAN2, {
-              required: true,
-              pattern: /^[0-9]{4}$/i,
-              maxLength: 4
-            })}
-            inputStyle={styles.inputIbanField}
-            onChangeText={(value: string) => {
-              const auxIban: string[] = ibanForm;
-              auxIban[1] = value;
-              setiban(auxIban);
-              setValue(IBAN2, value);
-            }}
-            keyboardType='numeric'
-            maxLength={4}
-            error={errors.iban2}
-            defaultValue={ibanForm[1]}
-          >
-          </Input>
-          <Text style={styles.ibanSeparator}>-</Text>
-
-          <Input
-            {...register(IBAN3, {
-              required: true,
-              pattern: /^[0-9]{4}$/i,
-              maxLength: 4
-            })}
-            inputStyle={styles.inputIbanField}
-            onChangeText={(value: string) => {
-              const auxIban: string[] = ibanForm;
-              auxIban[2] = value;
-              setiban(auxIban);
-              setValue(IBAN3, value);
-            }}
-            keyboardType='numeric'
-            maxLength={4}
-            error={errors.iban3}
-            defaultValue={ibanForm[2]}
-          >
-          </Input>
-          <Text style={styles.ibanSeparator}>-</Text>
-
-          <Input
-            {...register(IBAN4, {
-              required: true,
-              pattern: /^[0-9]{4}$/i,
-              maxLength: 4
-            })}
-            inputStyle={styles.inputIbanField}
-            onChangeText={(value: string) => {
-              const auxIban: string[] = ibanForm;
-              auxIban[3] = value;
-              setiban(auxIban);
-              setValue(IBAN4, value);
-            }}
-            keyboardType='numeric'
-            maxLength={4}
-            error={errors.iban4}
-            defaultValue={ibanForm[3]}
-          >
-          </Input>
-        </View>
+        <Input
+          label='IBAN'
+          {...register(IBAN, {
+            required: { value: true, message: 'Mandatory'},
+            pattern: { value: IBAN_PATTERN, message: 'Incorrect format'},
+          })}
+          inputStyle={styles.inputBig}
+          onChangeText={(value: string) => {
+            var formattedValue = value.toUpperCase().trim();
+            setiban(formattedValue);
+            setValue(IBAN, formattedValue);
+          }}
+          onBlur={() => {
+            if (IBAN_PATTERN.test(iban)) {
+              clearErrors(IBAN);
+            }
+            setiban(formatIbanWithSpaces(iban));
+          }}
+          textTransform="uppercase"
+          error={errors.iban}
+          defaultValue={iban}
+        >
+        </Input>
 
         <Input
           label='BIC'
