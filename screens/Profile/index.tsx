@@ -87,6 +87,9 @@ const Profile = ({ navigation }: any) => {
           error={errors.name}
           onChangeText={(value: string) => {
             setValue(NAME, value);
+            if (value.length) {
+              clearErrors(NAME);
+            }
           }}>  
         </Input>
 
@@ -121,7 +124,10 @@ const Profile = ({ navigation }: any) => {
           inputStyle={styles.inputBig}
           error={errors.bic}
           onChangeText={(value: string) => {
-            setValue(BIC, value);
+            setValue(BIC, value.toUpperCase());
+            if (value.length) {
+              clearErrors(BIC);
+            }
           }}>
         </Input>
 
@@ -160,9 +166,6 @@ const styles = StyleSheet.create({
   inputBig: {
     width: '100%'
   },
-  inputIbanField: {
-    width: 60,
-  },
   ibanContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
@@ -172,7 +175,6 @@ const styles = StyleSheet.create({
   ibanSeparator: {
     marginHorizontal: 10,
     textAlignVertical: 'center',
-
   },
   label: {
     paddingVertical: 5,

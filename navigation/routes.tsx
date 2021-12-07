@@ -1,2 +1,2 @@
-export const ROOT = 'GENERATOR';
+export const ROOT = 'MAIN';
 export const SETTINGS = 'SETTINGS';
