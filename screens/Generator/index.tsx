@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useLayoutEffect } from 'react';
 import { View, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import * as routes from '@app/navigation/routes';
 
 import styles from './styles';
 
@@ -13,7 +14,7 @@ export default function Generator({ navigation }: any) {
       headerRight: () => (
         <TouchableOpacity
           style={styles.container}
-          onPress={() => navigation.navigate('Config')}>
+          onPress={() => navigation.navigate(routes.SETTINGS)}>
           <Feather size={25} style={styles.icon} name="settings" />
         </TouchableOpacity>
       ),
