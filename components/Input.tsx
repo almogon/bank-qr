@@ -10,17 +10,18 @@ import {
 import { FieldError } from 'react-hook-form';
 
 interface Props extends TextInputProps {
-  name: string;
   label?: string;
   labelStyle?: TextStyle;
   inputStyle?: TextStyle;
   error?: FieldError | undefined;
   textTransform?: "capitalize" | "uppercase" | "lowercase" | "none";
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
 }
 
 export default React.forwardRef<any, Props>(
   (props: any, ref: any): React.ReactElement => {
-    const { label, labelStyle, error, autoCapitalize='none', textTransform='none', inputStyle, ...inputProps } = props;
+    const { label, labelStyle, error, autoCapitalize='none', 
+    textTransform='none', inputStyle, ...inputProps } = props;
 
     return (
       <View style={styles.container}>

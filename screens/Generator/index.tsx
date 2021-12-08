@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import * as React from 'react';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, TextInput } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as routes from '@app/navigation/routes';
 import { getItem } from '@app/stores/async-storage';
@@ -73,33 +73,37 @@ const Generator = ({ navigation }: any) => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <SvgQRCode value={generateQRString()} size={WIDTH / 1.5}></SvgQRCode>
+          
           <View style={styles.container2}>
-            <Input
-              label='AMOUNT'
-              name='AMOUNT'
-              keyboardType='numeric'
-              onChangeText={(value: string) => {
-                setamount(Number(value));
-              }}
-              onBlur={() => {
-                // Add amount validation
-                /** Check si hay punto y coma, si se utilizan de manera correcta
-                 * Si solo hay 1 punto, logica para mirar si es decimal o si es de miles
-                 * si solo hay 1 coma, mirar si es decimal o si es de miles
-                 */
-              }}
-              style={styles.inputAmount}
-            >
-              <Text>€</Text>
-            </Input>
+            <Text style={styles.label}>AMOUNT</Text>
+            <View style={[, styles.amountGroup]}>
+              <TextInput
+                style={styles.inputAmount}
+                keyboardType='numeric'
+                onChangeText={(value: string) => {
+                  setamount(Number(value));
+                }}
+                onBlur={() => {
+                  // Add amount validation
+                  /** Check si hay punto y coma, si se utilizan de manera correcta
+                   * Si solo hay 1 punto, logica para mirar si es decimal o si es de miles
+                   * si solo hay 1 coma, mirar si es decimal o si es de miles
+                   */
+                }}
+                />
+              <View style={styles.currency}>
+              <Text style={styles.currencyInput}>€</Text>
+              </View>
+            </View>
+            
 
             <Input
               label='REFERENCE'
-              name='REFERENCE'
               onChangeText={(value: string) => {
-                setreference(value);
+                setreference(value.trim());
               }}
               multiline={true}
+              style={styles.input}
             ></Input>
           </View>
         </View>
@@ -131,17 +135,59 @@ const styles = StyleSheet.create({
   icon: {
     marginHorizontal: 10
   },
-  inputAmount: {
-    width: WIDTH * 0.6,
+  input: {
+    width: WIDTH * 0.8,
     borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 5,
     paddingVertical: 5,
     paddingLeft: 5,
     fontSize: 16,
-    height: 40,
+    height: 50,
     color: 'grey',
     borderColor: '#c0cbd3'
+  },
+  inputAmount: {
+    flex: 1,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+    paddingVertical: 5,
+    paddingLeft: 5,
+    fontSize: 16,
+    height: 50,
+    color: 'grey',
+    borderColor: '#c0cbd3',
+  },
+  amountGroup: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    width: WIDTH * 0.8,
+  },
+  currency: {
+    height: 50,
+    width: 50,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    borderColor: '#c0cbd3',
+    textAlignVertical: 'center',
+    justifyContent: 'center',
+    alignItems: 'center'
+    
+  },
+  currencyInput: {
+    flex: 1,
+    fontSize: 40,
+    color: 'grey',
+  },
+  label: {
+    paddingVertical: 5,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'black',
   },
 });
 
