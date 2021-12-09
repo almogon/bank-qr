@@ -1,13 +1,12 @@
 import { Feather } from '@expo/vector-icons';
 import * as React from 'react';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, TextInput } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, TextInput, StyleSheet, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as routes from '@app/navigation/routes';
 import { getItem } from '@app/stores/async-storage';
 import SvgQRCode from 'react-native-qrcode-svg';
 import Input from '@app/components/Input';
-import { StyleSheet, Dimensions } from 'react-native';
 
 const CURRENCY = 'EUR';
 const SEPA = 'BCD'+'\n'+'001';
@@ -38,7 +37,7 @@ const Generator = ({ navigation }: any) => {
   const [iban, setiban] = useState(null);
   const [amount, setamount] = useState(0);
   const [reference, setreference] = useState(null);
-  const [message, setmessage] = useState(null);
+  const [isKeyboardOpen, setisKeyboardOpen] = useState(false);
 
   const generateQRString = (): string => {
     return SEPA + LINE_BREAK + 
@@ -57,6 +56,16 @@ const Generator = ({ navigation }: any) => {
       setcreditor(value.name);
       setiban(value.iban);
     }).catch(error => navigation.navigate(routes.SETTINGS));
+
+    Keyboard.addListener('keyboardDidShow', () => {
+      console.log('Keyzboard show');
+      setisKeyboardOpen(true);
+    });
+
+    Keyboard.addListener('keyboardDidHide', () => {
+      console.log('Keyzboard hide');
+      setisKeyboardOpen(false);
+    });
   }, []);
 
 
@@ -72,7 +81,7 @@ const Generator = ({ navigation }: any) => {
     <KeyboardAvoidingView behavior="padding" style={styles.full}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          <SvgQRCode value={generateQRString()} size={WIDTH / 1.5}></SvgQRCode>
+          {!isKeyboardOpen && <SvgQRCode value={generateQRString()} size={WIDTH / 1.5}></SvgQRCode>}
           
           <View style={styles.container2}>
             <Text style={styles.label}>AMOUNT</Text>
@@ -81,7 +90,7 @@ const Generator = ({ navigation }: any) => {
                 style={styles.inputAmount}
                 keyboardType='numeric'
                 onChangeText={(value: string) => {
-                  setamount(Number(value));
+                  setamount(Number(value.replace(',', '.')));
                 }}
                 onBlur={() => {
                   // Add amount validation
