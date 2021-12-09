@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
-import * as React from 'react';
+import React, { useRef } from 'react';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, TextInput, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, TextInput, StyleSheet, Dimensions, Animated } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as routes from '@app/navigation/routes';
 import { getItem } from '@app/stores/async-storage';
@@ -17,6 +17,35 @@ const WIDTH = Dimensions.get('screen').width;
 
 const Generator = ({ navigation }: any) => {
 
+  
+  const [bic, setbic] = useState(null);
+  const [creditor, setcreditor] = useState(null);
+  const [iban, setiban] = useState(null);
+  const [amount, setamount] = useState(0);
+  const [reference, setreference] = useState(null);
+  const [isKeyboardOpen, setisKeyboardOpen] = useState(false);
+  const [showQR, setshowQR] = useState(false);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const fadeIn = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const fadeOut = () => {
+    // Will change fadeAnim value to 0 in 3 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 3000,
+      useNativeDriver: true,
+    }).start();
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -28,16 +57,6 @@ const Generator = ({ navigation }: any) => {
       ),
     });
   }, [navigation]);
-
-  const valueQR = 'BCD'+'\n'+'001'+'\n'+'1'+'\n'+'SCT'+'\n'+'ABCDATWW'+'\n'+'Example with fictive data'+'\n'+'AT611904300234573201'+'\n'+'EUR12.5'+'\n'+'reference'+'\n'+'\n'+'message';
-
-
-  const [bic, setbic] = useState(null);
-  const [creditor, setcreditor] = useState(null);
-  const [iban, setiban] = useState(null);
-  const [amount, setamount] = useState(0);
-  const [reference, setreference] = useState(null);
-  const [isKeyboardOpen, setisKeyboardOpen] = useState(false);
 
   const generateQRString = (): string => {
     return SEPA + LINE_BREAK + 
@@ -58,15 +77,21 @@ const Generator = ({ navigation }: any) => {
     }).catch(error => navigation.navigate(routes.SETTINGS));
 
     Keyboard.addListener('keyboardDidShow', () => {
-      console.log('Keyzboard show');
       setisKeyboardOpen(true);
     });
 
     Keyboard.addListener('keyboardDidHide', () => {
-      console.log('Keyzboard hide');
       setisKeyboardOpen(false);
     });
   }, []);
+
+  useEffect(() => {
+    setshowQR(amount !== null && amount !== 0 && !isKeyboardOpen)
+  }, [amount, isKeyboardOpen]);
+
+  useEffect(() => {
+    showQR ? fadeIn() : fadeOut();
+  }, [showQR]);
 
 
   if (!bic || !creditor || !iban) {
@@ -81,14 +106,20 @@ const Generator = ({ navigation }: any) => {
     <KeyboardAvoidingView behavior="padding" style={styles.full}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          {!isKeyboardOpen && <SvgQRCode value={generateQRString()} size={WIDTH / 1.5}></SvgQRCode>}
+          <Animated.View style={{ opacity: fadeAnim }}>
+            {!isKeyboardOpen && <SvgQRCode value={generateQRString()} size={WIDTH / 1.5}></SvgQRCode>}
+          </Animated.View>
           
-          <View style={styles.container2}>
+          <Animated.View style={{
+            flex: showQR ? 0.5 : 1,
+            paddingTop: showQR ? 0 : isKeyboardOpen ? 50 : 0,
+          }}>
             <Text style={styles.label}>AMOUNT</Text>
-            <View style={[, styles.amountGroup]}>
+            <View style={styles.amountGroup}>
               <TextInput
                 style={styles.inputAmount}
                 keyboardType='numeric'
+                autoFocus={true}
                 onChangeText={(value: string) => {
                   setamount(Number(value.replace(',', '.')));
                 }}
@@ -114,7 +145,7 @@ const Generator = ({ navigation }: any) => {
               multiline={true}
               style={styles.input}
             ></Input>
-          </View>
+          </Animated.View>
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
