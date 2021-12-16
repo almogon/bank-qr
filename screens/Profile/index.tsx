@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Clipboard, useColorScheme } from "react-native";
 import { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ScrollView, View, Text } from "@app/components/Themed";
@@ -29,6 +29,7 @@ const Profile = ({ navigation }: any) => {
     formState: { errors },
     clearErrors,
   } = useForm({ mode: "onChange" });
+  const colorScheme = useColorScheme();
 
   const onSubmit: any = (data: any) => {
     setItem("personalData", {
@@ -52,13 +53,17 @@ const Profile = ({ navigation }: any) => {
           setValue(NAME, personalData.name);
         }
         if (personalData.iban) {
-          // TODO Format add spaces
           setiban(formatIbanWithSpaces(personalData.iban));
           setValue(IBAN, personalData.iban);
         }
         if (personalData.bic) {
           setBic(personalData.bic);
           setValue(BIC, personalData.bic);
+        }
+      } else {
+        const copyText = await Clipboard.getString();
+        if (IBAN_PATTERN.test(copyText)) {
+          console.debug("TODO - Add copy text after ask with a modal");
         }
       }
     };
@@ -183,7 +188,12 @@ const Profile = ({ navigation }: any) => {
         <View style={styles.buttonGroup}>
           <TouchableOpacity
             onPress={removeData}
-            style={[styles.button, styles.buttonRemove]}
+            style={[
+              styles.button,
+              {
+                backgroundColor: colorScheme === "dark" ? "#CC0000" : "#FF0000",
+              },
+            ]}
           >
             <MaterialIcons
               size={25}
@@ -195,7 +205,12 @@ const Profile = ({ navigation }: any) => {
 
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
-            style={[styles.button, styles.buttonSave]}
+            style={[
+              styles.button,
+              {
+                backgroundColor: colorScheme === "dark" ? "#009900" : "#00CC00",
+              },
+            ]}
           >
             <Feather size={25} name="save" style={{ color: "white" }}></Feather>
             <Text style={styles.buttonText}>{i18n.t("save")}</Text>
@@ -258,12 +273,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     marginHorizontal: 15,
-  },
-  buttonSave: {
-    backgroundColor: "green",
-  },
-  buttonRemove: {
-    backgroundColor: "red",
   },
   buttonScan: {
     backgroundColor: "grey",

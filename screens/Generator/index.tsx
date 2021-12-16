@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Dimensions,
   Animated,
+  useColorScheme,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as routes from "@app/navigation/routes";
@@ -35,6 +36,7 @@ const Generator = ({ navigation }: any) => {
   const [isKeyboardOpen, setisKeyboardOpen] = useState(false);
   const [showQR, setshowQR] = useState(false);
 
+  const colorScheme = useColorScheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const isFocused = useIsFocused();
 
@@ -63,11 +65,18 @@ const Generator = ({ navigation }: any) => {
           style={styles.container}
           onPress={() => navigation.navigate(routes.SETTINGS)}
         >
-          <Feather size={25} style={styles.icon} name="settings" />
+          <Feather
+            size={25}
+            style={[
+              styles.icon,
+              { color: colorScheme === "dark" ? "white" : "black" },
+            ]}
+            name="settings"
+          />
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
+  }, [navigation, colorScheme]);
 
   const generateQRString = (): string => {
     return (
@@ -91,19 +100,24 @@ const Generator = ({ navigation }: any) => {
   };
 
   useEffect(() => {
-    Keyboard.addListener("keyboardDidShow", () => {
+    let keyboardShown = Keyboard.addListener("keyboardDidShow", () => {
       setisKeyboardOpen(true);
     });
 
-    Keyboard.addListener("keyboardDidHide", () => {
+    let keyboardHide = Keyboard.addListener("keyboardDidHide", () => {
       setisKeyboardOpen(false);
     });
+
+    return () => {
+      keyboardShown = null;
+      keyboardHide = null;
+    };
   }, []);
 
   useEffect(() => {
     getItem("personalData")
       .then((value) => {
-        console.log("Promise", value);
+        // console.log("Promise", value);
         setbic(value.bic);
         setcreditor(value.name);
         setiban(value.iban);
