@@ -7,6 +7,7 @@ import { ScrollView, View, Text } from "@app/components/Themed";
 import Input from "@app/components/Input";
 import { getItem, setItem, removeItem } from "@app/stores/async-storage";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
+import i18n from "@app/i18n";
 
 type PersonalData = {
   name: string;
@@ -92,12 +93,16 @@ const Profile = ({ navigation }: any) => {
     removeItem("personalData");
   };
 
+  const scanCard = () => {
+    console.log("TODO");
+  };
+
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainerStyle}
     >
-      <Text style={styles.title}>Personal Data</Text>
+      <Text style={styles.title}>{i18n.t("personalData")}</Text>
       <View
         style={styles.separator}
         lightColor="#eee"
@@ -105,9 +110,9 @@ const Profile = ({ navigation }: any) => {
       />
       <View style={styles.form}>
         <Input
-          label="NAME"
+          label={i18n.t("name").toUpperCase()}
           {...register(NAME, {
-            required: { value: true, message: "Mandatory" },
+            required: { value: true, message: i18n.t("mandatory") },
           })}
           defaultValue={name}
           inputStyle={styles.inputBig}
@@ -121,10 +126,13 @@ const Profile = ({ navigation }: any) => {
         ></Input>
 
         <Input
-          label="IBAN"
+          label={i18n.t("iban").toUpperCase()}
           {...register(IBAN, {
-            required: { value: true, message: "Mandatory" },
-            pattern: { value: IBAN_PATTERN, message: "Incorrect format" },
+            required: { value: true, message: i18n.t("mandatory") },
+            pattern: {
+              value: IBAN_PATTERN,
+              message: i18n.t("incorrectFormat"),
+            },
           })}
           inputStyle={styles.inputBig}
           onChangeText={(value: string) => {
@@ -144,9 +152,9 @@ const Profile = ({ navigation }: any) => {
         ></Input>
 
         <Input
-          label="BIC"
+          label={i18n.t("bic").toUpperCase()}
           {...register(BIC, {
-            required: { value: true, message: "Mandatory" },
+            required: { value: true, message: i18n.t("mandatory") },
           })}
           defaultValue={bic}
           inputStyle={styles.inputBig}
@@ -159,26 +167,40 @@ const Profile = ({ navigation }: any) => {
           }}
         ></Input>
       </View>
-      <View style={styles.buttonGroup}>
+      <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={removeData}
-          style={[styles.button, styles.buttonRemove]}
+          onPress={scanCard}
+          style={[styles.button, styles.buttonScan]}
         >
           <MaterialIcons
             size={25}
-            name="delete-forever"
+            name="credit-card"
             style={{ color: "white" }}
           ></MaterialIcons>
-          <Text style={styles.buttonText}>Delete</Text>
+          <Text style={styles.buttonText}>{i18n.t("scan")}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={handleSubmit(onSubmit)}
-          style={styles.button}
-        >
-          <Feather size={25} name="save" style={{ color: "white" }}></Feather>
-          <Text style={styles.buttonText}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            onPress={removeData}
+            style={[styles.button, styles.buttonRemove]}
+          >
+            <MaterialIcons
+              size={25}
+              name="delete-forever"
+              style={{ color: "white" }}
+            ></MaterialIcons>
+            <Text style={styles.buttonText}>{i18n.t("delete")}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleSubmit(onSubmit)}
+            style={[styles.button, styles.buttonSave]}
+          >
+            <Feather size={25} name="save" style={{ color: "white" }}></Feather>
+            <Text style={styles.buttonText}>{i18n.t("save")}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -228,27 +250,43 @@ const styles = StyleSheet.create({
     color: "black",
   },
   button: {
-    minWidth: 80,
-    backgroundColor: "green",
+    minWidth: 120,
     borderRadius: 100,
     alignItems: "center",
-    paddingVertical: 15,
+    paddingVertical: 10,
     paddingHorizontal: 15,
-    marginTop: 15,
+    justifyContent: "center",
+    flexDirection: "row",
+    marginHorizontal: 15,
+  },
+  buttonSave: {
+    backgroundColor: "green",
   },
   buttonRemove: {
     backgroundColor: "red",
   },
+  buttonScan: {
+    backgroundColor: "grey",
+    flexDirection: "row",
+    justifyContent: "center",
+    width: 270,
+    alignSelf: "center",
+  },
   buttonText: {
     color: "white",
     fontWeight: "bold",
+    marginLeft: 5,
   },
   buttonGroup: {
     flex: 1,
-    marginTop: 20,
+    marginTop: 30,
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
+  },
+  buttonContainer: {
+    flex: 1,
+    marginTop: 40,
     alignSelf: "stretch",
   },
 });

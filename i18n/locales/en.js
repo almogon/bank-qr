@@ -1,0 +1,16 @@
+export default {
+  noData: "No data available",
+  amount: "Amount",
+  reference: "Reference",
+  name: "Name",
+  iban: "Iban",
+  bic: "bic",
+  scan: "Scan your card",
+  save: "Save",
+  delete: "Delete",
+  personalData: "Personal Data",
+  mandatory: "Mandatory",
+  incorrectFormat: "Incorrect format",
+  main: "Main",
+  settings: "Settings",
+};

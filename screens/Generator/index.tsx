@@ -17,6 +17,7 @@ import { getItem } from "@app/stores/async-storage";
 import SvgQRCode from "react-native-qrcode-svg";
 import Input from "@app/components/Input";
 import { useIsFocused } from "@react-navigation/native";
+import i18n from "@app/i18n";
 
 const CURRENCY = "EUR";
 const SEPA = "BCD" + "\n" + "001";
@@ -90,7 +91,6 @@ const Generator = ({ navigation }: any) => {
   };
 
   useEffect(() => {
-    console.log("Use effect keyboard");
     Keyboard.addListener("keyboardDidShow", () => {
       setisKeyboardOpen(true);
     });
@@ -101,7 +101,6 @@ const Generator = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    console.log("Use effect focused");
     getItem("personalData")
       .then((value) => {
         console.log("Promise", value);
@@ -121,10 +120,9 @@ const Generator = ({ navigation }: any) => {
   }, [showQR]);
 
   if (!bic || !creditor || !iban) {
-    console.log("no data");
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>NO DATA AVAILABLE</Text>
+        <Text style={styles.title}>{i18n.t("noData")}</Text>
       </View>
     );
   }
@@ -148,7 +146,7 @@ const Generator = ({ navigation }: any) => {
               paddingTop: showQR ? 0 : isKeyboardOpen ? 50 : 0,
             }}
           >
-            <Text style={styles.label}>AMOUNT</Text>
+            <Text style={styles.label}>{i18n.t("amount").toUpperCase()}</Text>
             <View style={styles.amountGroup}>
               <TextInput
                 style={styles.inputAmount}
@@ -171,7 +169,7 @@ const Generator = ({ navigation }: any) => {
             </View>
 
             <Input
-              label="REFERENCE"
+              label={i18n.t("reference").toUpperCase()}
               onChangeText={(value: string) => {
                 setreference(value.trim());
               }}
