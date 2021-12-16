@@ -173,7 +173,7 @@ const Profile = ({ navigation }: any) => {
         ></Input>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={scanCard}
           style={[styles.button, styles.buttonScan]}
         >
@@ -183,7 +183,7 @@ const Profile = ({ navigation }: any) => {
             style={{ color: "white" }}
           ></MaterialIcons>
           <Text style={styles.buttonText}>{i18n.t("scan")}</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={styles.buttonGroup}>
           <TouchableOpacity
