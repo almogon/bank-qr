@@ -1,42 +1,51 @@
-import * as React from 'react';
+import * as React from "react";
 import { useForm } from "react-hook-form";
-import { StyleSheet } from 'react-native';
-import { useEffect, useState } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { ScrollView, View, Text } from '@app/components/Themed';
-import Input from '@app/components/Input';
-import { getItem, setItem } from '@app/stores/async-storage';
+import { StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, View, Text } from "@app/components/Themed";
+import Input from "@app/components/Input";
+import { getItem, setItem, removeItem } from "@app/stores/async-storage";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
+import i18n from "@app/i18n";
 
 type PersonalData = {
   name: string;
   iban: string;
   bic: string;
-}
+};
 
-const NAME = 'name';
-const IBAN = 'iban';
-const BIC = 'bic';
-const IBAN_PATTERN = /^\b([a-zA-Z]{2}[0-9]{2})(?:[ ]?[0-9]{4}){4,5}(?!(?:[ ]?[0-9]){3})(?:[ ]?[0-9]{1,2})?\b$/gm
+const NAME = "name";
+const IBAN = "iban";
+const BIC = "bic";
+const IBAN_PATTERN =
+  /^\b([a-zA-Z]{2}[0-9]{2})(?:[ ]?[0-9]{4}){4,5}(?!(?:[ ]?[0-9]){3})(?:[ ]?[0-9]{1,2})?\b$/gm;
 
 const Profile = ({ navigation }: any) => {
-  const { register, handleSubmit, setValue, formState: { errors }, clearErrors } = useForm({ mode: 'onChange' });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    clearErrors,
+  } = useForm({ mode: "onChange" });
 
   const onSubmit: any = (data: any) => {
-    setItem('personalData', {
+    setItem("personalData", {
       name: data.name.toUpperCase(),
       iban: data.iban.toUpperCase(),
-      bic: data.bic.toUpperCase()
+      bic: data.bic.toUpperCase(),
     });
-    console.log('GUARDAR y NAVEGAR');
+    console.log("GUARDAR y NAVEGAR");
     navigation.goBack();
   };
-  const [iban, setiban] = useState('');
-  const [name, setName] = useState('');
-  const [bic, setBic] = useState('');
+  const [iban, setiban] = useState("");
+  const [name, setName] = useState("");
+  const [bic, setBic] = useState("");
 
   useEffect(() => {
     const fnct = async () => {
-      const personalData: PersonalData = await getItem('personalData');
+      const personalData: PersonalData = await getItem("personalData");
       if (personalData != null) {
         if (personalData.name) {
           setName(personalData.name);
@@ -52,36 +61,59 @@ const Profile = ({ navigation }: any) => {
           setValue(BIC, personalData.bic);
         }
       }
-    }
+    };
 
     fnct();
-  }, [])
+  }, []);
 
   const formatIbanWithSpaces = (iban: string): string => {
     if (!iban.length) {
-      console.error('Empty iban');
+      console.error("Empty iban");
       return;
     }
-    iban = iban.replace( /\s/g , '');
-    let ibanAux = '';
-    iban.split('').map((char: string, idx: number) => {
+    iban = iban.replace(/\s/g, "");
+    let ibanAux = "";
+    iban.split("").map((char: string, idx: number) => {
       if (idx != 0 && idx % 4 === 0) {
-        ibanAux += ' '
+        ibanAux += " ";
       }
       ibanAux += char;
     });
 
     return ibanAux;
-  }
+  };
+
+  const removeData = () => {
+    setName("");
+    setValue(NAME, "");
+    setiban("");
+    setValue(IBAN, "");
+    setBic("");
+    setValue(BIC, "");
+    removeItem("personalData");
+  };
+
+  const scanCard = () => {
+    console.log("TODO");
+  };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
-      <Text style={styles.title}>Personal Data</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainerStyle}
+    >
+      <Text style={styles.title}>{i18n.t("personalData")}</Text>
+      <View
+        style={styles.separator}
+        lightColor="#eee"
+        darkColor="rgba(255,255,255,0.1)"
+      />
       <View style={styles.form}>
         <Input
-          label='NAME'
-          {...register(NAME, { required: { value: true, message: 'Mandatory'} })}
+          label={i18n.t("name").toUpperCase()}
+          {...register(NAME, {
+            required: { value: true, message: i18n.t("mandatory") },
+          })}
           defaultValue={name}
           inputStyle={styles.inputBig}
           error={errors.name}
@@ -90,14 +122,17 @@ const Profile = ({ navigation }: any) => {
             if (value.length) {
               clearErrors(NAME);
             }
-          }}>  
-        </Input>
+          }}
+        ></Input>
 
         <Input
-          label='IBAN'
+          label={i18n.t("iban").toUpperCase()}
           {...register(IBAN, {
-            required: { value: true, message: 'Mandatory'},
-            pattern: { value: IBAN_PATTERN, message: 'Incorrect format'},
+            required: { value: true, message: i18n.t("mandatory") },
+            pattern: {
+              value: IBAN_PATTERN,
+              message: i18n.t("incorrectFormat"),
+            },
           })}
           inputStyle={styles.inputBig}
           onChangeText={(value: string) => {
@@ -114,12 +149,13 @@ const Profile = ({ navigation }: any) => {
           textTransform="uppercase"
           error={errors.iban}
           defaultValue={iban}
-        >
-        </Input>
+        ></Input>
 
         <Input
-          label='BIC'
-          {...register(BIC, { required: { value: true, message: 'Mandatory'} })}
+          label={i18n.t("bic").toUpperCase()}
+          {...register(BIC, {
+            required: { value: true, message: i18n.t("mandatory") },
+          })}
           defaultValue={bic}
           inputStyle={styles.inputBig}
           error={errors.bic}
@@ -128,73 +164,129 @@ const Profile = ({ navigation }: any) => {
             if (value.length) {
               clearErrors(BIC);
             }
-          }}>
-        </Input>
-
-        <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.button}>
-          <Text style={styles.buttonText}>SAVE</Text>
+          }}
+        ></Input>
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={scanCard}
+          style={[styles.button, styles.buttonScan]}
+        >
+          <MaterialIcons
+            size={25}
+            name="credit-card"
+            style={{ color: "white" }}
+          ></MaterialIcons>
+          <Text style={styles.buttonText}>{i18n.t("scan")}</Text>
         </TouchableOpacity>
+
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            onPress={removeData}
+            style={[styles.button, styles.buttonRemove]}
+          >
+            <MaterialIcons
+              size={25}
+              name="delete-forever"
+              style={{ color: "white" }}
+            ></MaterialIcons>
+            <Text style={styles.buttonText}>{i18n.t("delete")}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleSubmit(onSubmit)}
+            style={[styles.button, styles.buttonSave]}
+          >
+            <Feather size={25} name="save" style={{ color: "white" }}></Feather>
+            <Text style={styles.buttonText}>{i18n.t("save")}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
-}
+};
 
 export default Profile;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
-    paddingTop: 30
+    width: "100%",
+    paddingTop: 30,
   },
   contentContainerStyle: {
-    alignItems: 'center',
-    justifyContent: 'flex-start'
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   separator: {
     marginVertical: 30,
     height: 1,
-    width: '80%',
+    width: "80%",
   },
   form: {
-    width: '80%',
+    width: "80%",
   },
   inputBig: {
-    width: '100%'
+    width: "100%",
   },
   ibanContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    width: '100%',
-    marginBottom: 8
+    width: "100%",
+    marginBottom: 8,
   },
   ibanSeparator: {
     marginHorizontal: 10,
-    textAlignVertical: 'center',
+    textAlignVertical: "center",
   },
   label: {
     paddingVertical: 5,
     fontSize: 16,
-    fontWeight: 'bold',
-    color: 'black',
+    fontWeight: "bold",
+    color: "black",
   },
   button: {
-    alignSelf: 'center',
-    backgroundColor: 'green',
-    borderRadius: 40,
-    width: '60%',
-    alignItems: 'center',
-    marginTop: 50,
-    paddingVertical: 15,
+    minWidth: 120,
+    borderRadius: 100,
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    justifyContent: "center",
+    flexDirection: "row",
+    marginHorizontal: 15,
+  },
+  buttonSave: {
+    backgroundColor: "green",
+  },
+  buttonRemove: {
+    backgroundColor: "red",
+  },
+  buttonScan: {
+    backgroundColor: "grey",
+    flexDirection: "row",
+    justifyContent: "center",
+    width: 270,
+    alignSelf: "center",
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold'
-  }
+    color: "white",
+    fontWeight: "bold",
+    marginLeft: 5,
+  },
+  buttonGroup: {
+    flex: 1,
+    marginTop: 30,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonContainer: {
+    flex: 1,
+    marginTop: 40,
+    alignSelf: "stretch",
+  },
 });
-
-
