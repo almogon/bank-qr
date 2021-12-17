@@ -13,4 +13,6 @@ export default {
   incorrectFormat: "Incorrect format",
   main: "Main",
   settings: "Settings",
+  ibanClipboard: "Is this text {{clipboard}} your IBAN?",
+  bicClipboard: "Is this text {{clipboard}} your BIC?",
 };

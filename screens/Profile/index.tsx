@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
-import { StyleSheet, Clipboard, useColorScheme } from "react-native";
+import { StyleSheet, Clipboard, useColorScheme, Modal } from "react-native";
 import { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ScrollView, View, Text } from "@app/components/Themed";
@@ -30,6 +30,10 @@ const Profile = ({ navigation }: any) => {
     clearErrors,
   } = useForm({ mode: "onChange" });
   const colorScheme = useColorScheme();
+
+  // TODO
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isIbanCopied, setIbanCopied] = useState(false);
 
   const onSubmit: any = (data: any) => {
     setItem("personalData", {
@@ -63,7 +67,7 @@ const Profile = ({ navigation }: any) => {
       } else {
         const copyText = await Clipboard.getString();
         if (IBAN_PATTERN.test(copyText)) {
-          console.debug("TODO - Add copy text after ask with a modal");
+          setIbanCopied(true);
         }
       }
     };
@@ -297,5 +301,38 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 40,
     alignSelf: "stretch",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
