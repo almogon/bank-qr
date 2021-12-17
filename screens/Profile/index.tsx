@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Clipboard, useColorScheme, Modal } from "react-native";
 import { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ScrollView, View, Text } from "@app/components/Themed";
@@ -29,6 +29,11 @@ const Profile = ({ navigation }: any) => {
     formState: { errors },
     clearErrors,
   } = useForm({ mode: "onChange" });
+  const colorScheme = useColorScheme();
+
+  // TODO
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isIbanCopied, setIbanCopied] = useState(false);
 
   const onSubmit: any = (data: any) => {
     setItem("personalData", {
@@ -52,13 +57,17 @@ const Profile = ({ navigation }: any) => {
           setValue(NAME, personalData.name);
         }
         if (personalData.iban) {
-          // TODO Format add spaces
           setiban(formatIbanWithSpaces(personalData.iban));
           setValue(IBAN, personalData.iban);
         }
         if (personalData.bic) {
           setBic(personalData.bic);
           setValue(BIC, personalData.bic);
+        }
+      } else {
+        const copyText = await Clipboard.getString();
+        if (IBAN_PATTERN.test(copyText)) {
+          setIbanCopied(true);
         }
       }
     };
@@ -168,7 +177,7 @@ const Profile = ({ navigation }: any) => {
         ></Input>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={scanCard}
           style={[styles.button, styles.buttonScan]}
         >
@@ -178,12 +187,17 @@ const Profile = ({ navigation }: any) => {
             style={{ color: "white" }}
           ></MaterialIcons>
           <Text style={styles.buttonText}>{i18n.t("scan")}</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={styles.buttonGroup}>
           <TouchableOpacity
             onPress={removeData}
-            style={[styles.button, styles.buttonRemove]}
+            style={[
+              styles.button,
+              {
+                backgroundColor: colorScheme === "dark" ? "#CC0000" : "#FF0000",
+              },
+            ]}
           >
             <MaterialIcons
               size={25}
@@ -195,7 +209,12 @@ const Profile = ({ navigation }: any) => {
 
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
-            style={[styles.button, styles.buttonSave]}
+            style={[
+              styles.button,
+              {
+                backgroundColor: colorScheme === "dark" ? "#009900" : "#00CC00",
+              },
+            ]}
           >
             <Feather size={25} name="save" style={{ color: "white" }}></Feather>
             <Text style={styles.buttonText}>{i18n.t("save")}</Text>
@@ -259,12 +278,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginHorizontal: 15,
   },
-  buttonSave: {
-    backgroundColor: "green",
-  },
-  buttonRemove: {
-    backgroundColor: "red",
-  },
   buttonScan: {
     backgroundColor: "grey",
     flexDirection: "row",
@@ -288,5 +301,38 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 40,
     alignSelf: "stretch",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
