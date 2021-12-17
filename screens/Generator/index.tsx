@@ -95,6 +95,7 @@ const Generator = ({ navigation }: any) => {
       CURRENCY +
       amount +
       LINE_BREAK +
+      LINE_BREAK +
       reference
     );
   };
