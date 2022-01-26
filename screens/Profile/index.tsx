@@ -38,7 +38,7 @@ const Profile = ({ navigation }: any) => {
   const onSubmit: any = (data: any) => {
     setItem("personalData", {
       name: data.name.toUpperCase(),
-      iban: data.iban.toUpperCase(),
+      iban: removeSpacesIban(data.iban.toUpperCase()),
       bic: data.bic.toUpperCase(),
     });
     console.log("GUARDAR y NAVEGAR");
@@ -92,6 +92,10 @@ const Profile = ({ navigation }: any) => {
     return ibanAux;
   };
 
+  const removeSpacesIban = (iban: string): string => {
+    return iban.replace(/\s/g, "");
+  };
+
   const removeData = () => {
     setName("");
     setValue(NAME, "");
@@ -132,6 +136,7 @@ const Profile = ({ navigation }: any) => {
               clearErrors(NAME);
             }
           }}
+          maxLength={70}
         ></Input>
 
         <Input
@@ -162,9 +167,7 @@ const Profile = ({ navigation }: any) => {
 
         <Input
           label={i18n.t("bic").toUpperCase()}
-          {...register(BIC, {
-            required: { value: true, message: i18n.t("mandatory") },
-          })}
+          {...register(BIC)}
           defaultValue={bic}
           inputStyle={styles.inputBig}
           error={errors.bic}

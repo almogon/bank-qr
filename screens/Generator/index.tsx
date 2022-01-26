@@ -21,7 +21,7 @@ import { useIsFocused } from "@react-navigation/native";
 import i18n from "@app/i18n";
 
 const CURRENCY = "EUR";
-const SEPA = "BCD" + "\n" + "001";
+const SEPA = "BCD" + "\n" + "002" + "\n";
 const DATA_CODE_UTF_8 = "1";
 const EXTRA_INFO = "SCT";
 const LINE_BREAK = "\n";
@@ -79,14 +79,27 @@ const Generator = ({ navigation }: any) => {
   }, [navigation, colorScheme]);
 
   const generateQRString = (): string => {
-    return (
+    /**
+     * 
+BCD
+002
+1
+SCT
+
+Deutsches Rotes Kreuz e. V.
+AT351921080380040917
+EUR10.00
+
+
+Internationale Soforthilfe
+     */
+
+    const payload =
       SEPA +
-      LINE_BREAK +
       DATA_CODE_UTF_8 +
       LINE_BREAK +
       EXTRA_INFO +
       LINE_BREAK +
-      bic +
       LINE_BREAK +
       creditor +
       LINE_BREAK +
@@ -96,8 +109,10 @@ const Generator = ({ navigation }: any) => {
       amount +
       LINE_BREAK +
       LINE_BREAK +
-      reference
-    );
+      LINE_BREAK +
+      reference;
+    console.log(payload);
+    return payload;
   };
 
   useEffect(() => {

@@ -5,7 +5,7 @@
     "slug": "easypay",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/easypay_logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -22,7 +22,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/easypay_logo.png",
         "backgroundColor": "#ffffff"
       }
     },
@@ -30,6 +30,6 @@
       "favicon": "./assets/images/favicon.png"
     },
     "githubUrl": "https://github.com/almogon/bank-qr",
-    "primaryColor": "white"
+    "primaryColor": "#000000"
   }
 }
